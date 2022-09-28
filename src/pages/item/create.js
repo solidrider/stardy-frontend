@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import useAuth from "../../utils/useAuth";
+import { axiosClient } from "../../services/axiosClient";
 // import ImgInput from "../../components/imgInput"
 
 const CreateItem = () => {
@@ -11,25 +12,13 @@ const CreateItem = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await fetch(
-        "https://stardy-backend.herokuapp.com/item/create",
-        {
-          method: "POST",
-          headers: {
-            Accept: "application/json",
-            "Content-Type": "application/json",
-            authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-          body: JSON.stringify({
-            title: title,
-            price: price,
-            image: image,
-            description: description,
-          }),
-        }
-      );
-      const jsonData = await response.json();
-      alert(jsonData.message);
+      const response = await axiosClient.post("/item/create", {
+        title: title,
+        price: price,
+        image: image,
+        description: description,
+      });
+      alert(response.data.message);
     } catch (err) {
       alert("アイテム作成失敗");
     }

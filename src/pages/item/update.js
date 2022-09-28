@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import useAuth from "../../utils/useAuth";
+import { axiosClient } from "../../services/axiosClient";
 
 const UpdateItem = () => {
   const params = useParams();
@@ -15,15 +16,12 @@ const UpdateItem = () => {
     document.title = "編集ページ";
 
     const getSingleItem = async () => {
-      const response = await fetch(
-        `https://stardy-backend.herokuapp.com/item/${params.id}`
-      );
-      const jsonResponse = await response.json();
-      setTitle(jsonResponse.singleItem.title);
-      setPrice(jsonResponse.singleItem.price);
-      setImage(jsonResponse.singleItem.image);
-      setDescription(jsonResponse.singleItem.description);
-      setEmail(jsonResponse.singleItem.email);
+      const response = await axiosClient.get(`/item/${params.id}`);
+      setTitle(response.data.singleItem.title);
+      setPrice(response.data.singleItem.price);
+      setImage(response.data.singleItem.image);
+      setDescription(response.data.singleItem.description);
+      setEmail(response.data.singleItem.email);
     };
     getSingleItem();
   }, [params.id]);
@@ -31,25 +29,13 @@ const UpdateItem = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await fetch(
-        `https://stardy-backend.herokuapp.com/item/update/${params.id}`,
-        {
-          method: "PUT",
-          headers: {
-            Accept: "application/json",
-            "Content-Type": "application/json",
-            authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-          body: JSON.stringify({
-            title: title,
-            price: price,
-            image: image,
-            description: description,
-          }),
-        }
-      );
-      const jsonData = await response.json();
-      alert(jsonData.message);
+      const response = await axiosClient.put(`/item/update/${params.id}`, {
+        title: title,
+        price: price,
+        image: image,
+        description: description,
+      });
+      alert(response.data.message);
     } catch (err) {
       alert("アイテム編集失敗");
     }
