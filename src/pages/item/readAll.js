@@ -1,13 +1,13 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
+import { axiosClient } from "../../services/axiosClient";
 
 const ReadAll = () => {
   const [allItems, setAllItems] = useState();
   useEffect(() => {
     const getAllItems = async () => {
-      const response = await fetch("https://stardy-backend.herokuapp.com");
-      const jsonResponse = await response.json();
-      setAllItems(jsonResponse);
+      const response = await axiosClient.get("/");
+      setAllItems(response.data);
     };
     getAllItems();
   }, []);

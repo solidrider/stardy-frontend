@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link, useParams } from "react-router-dom";
+import { axiosClient } from "../../services/axiosClient";
 
 const ReadSingleItem = () => {
   const params = useParams();
@@ -9,14 +10,12 @@ const ReadSingleItem = () => {
   const [description, setDescription] = useState("");
   useEffect(() => {
     const getSingleItem = async () => {
-      const response = await fetch(
-        `https://stardy-backend.herokuapp.com/item/${params.id}`
-      );
-      const jsonResponse = await response.json();
-      setTitle(jsonResponse.singleItem.title);
-      setPrice(jsonResponse.singleItem.price);
-      setImage(jsonResponse.singleItem.image);
-      setDescription(jsonResponse.singleItem.description);
+      const response = await axiosClient.get(`/item/${params.id}`);
+      console.log(response.data);
+      setTitle(response.data.singleItem.title);
+      setPrice(response.data.singleItem.price);
+      setImage(response.data.singleItem.image);
+      setDescription(response.data.singleItem.description);
     };
     getSingleItem();
   }, [params.id]);
